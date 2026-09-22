@@ -32,8 +32,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           ),
           validator: (value){
             if (value == null || value.isEmpty){
-              return "please enter a title"
+              return "please enter a title";
             }
+            return null;
           },
         ),
         TextFormField(
