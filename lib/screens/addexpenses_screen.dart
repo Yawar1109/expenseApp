@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import '../utils/categories.dart';
 
@@ -14,6 +14,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   String? selectedCategory;
   DateTime? selectedDate;
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +29,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     child: Column(
       children: [
         TextFormField(
+          controller: titleController,
           decoration: InputDecoration(
             labelText: "Title",
           ),
@@ -38,11 +41,22 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           },
         ),
         TextFormField(
+          controller: amountController,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
             labelText: "Amount",
             
           ),
+          validator: (value) {
+            if(value == null || value.isEmpty){
+              return " plz enter a amount";
+              
+            }
+            if(double.tryParse(value) == null ){
+return'please enter a valid umber';
+            }
+            return null;
+          },
           
         ),
        DropdownButtonFormField<String>(
@@ -59,6 +73,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       setState(() {
         selectedCategory = value;
       });
+      
+    },
+    validator: (value){
+      if(value == null){
+        return 'please select category';
+      }
+      return null;
     },
     ),
     const SizedBox(height: 16),
@@ -70,6 +91,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
       ),
       IconButton(
+        
         icon: Icon(Icons.calendar_today),
         onPressed: () async {
           DateTime? pickedDate = await showDatePicker(
@@ -80,11 +102,34 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           );
           setState(() {
             selectedDate = pickedDate;
-          });
+          }
+          );
+         
+          
         },
+        
+        
       ),
     ],
     ),
+    const SizedBox(height: 30,),
+    ElevatedButton(onPressed: (){
+      if(_formKey.currentState!.validate() && selectedDate != null){
+        print("tittle : ${titleController.text}");
+        print("Amount:${amountController.text} ");
+        print("Date:${selectedDate}");
+        print("Category:${selectedCategory}");
+      } else if (selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please select a date")),
+      );
+    }
+
+    }, child: Text(
+      'Save Expenses'
+    )
+    
+    )
       ],
     ),
   ),
